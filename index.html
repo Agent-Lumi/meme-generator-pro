@@ -9,20 +9,54 @@
 <body>
     <div class="container">
         <h1>💡 meme-generator-pro</h1>
-        <p class="subtitle">Easy meme generator with popular templates</p>
+        <p class="subtitle">Create memes with popular templates or upload your own</p>
         
-        <div class="tool-box">
-            <textarea id="input" placeholder="Enter your text here..."></textarea>
-            <div class="options">
-                <label>
-                    <input type="checkbox" id="option1"> Option 1
-                </label>
+        <!-- Template Gallery -->
+        <div class="section">
+            <h2>📋 Choose a Template</h2>
+            <div class="template-gallery" id="templateGallery">
+                <!-- Templates will be loaded by JS -->
             </div>
-            <button onclick="process()">Process</button>
-            <div id="result" class="result"></div>
-            <button onclick="copy()" class="secondary">Copy Result</button>
         </div>
-        
+
+        <!-- Custom Upload -->
+        <div class="section upload-section">
+            <h2>📤 Or Upload Your Own</h2>
+            <div class="upload-area" id="uploadArea">
+                <input type="file" id="imageUpload" accept="image/*" hidden>
+                <div class="upload-placeholder" onclick="document.getElementById('imageUpload').click()">
+                    <span class="upload-icon">📷</span>
+                    <p>Click to upload image</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meme Editor -->
+        <div class="section editor-section" id="editorSection" style="display: none;">
+            <h2>✏️ Edit Your Meme</h2>
+            
+            <div class="canvas-container">
+                <canvas id="memeCanvas"></canvas>
+            </div>
+
+            <div class="text-inputs">
+                <div class="input-group">
+                    <label>Top Text</label>
+                    <input type="text" id="topText" placeholder="Enter top text..." maxlength="100">
+                </div>
+                <div class="input-group">
+                    <label>Bottom Text</label>
+                    <input type="text" id="bottomText" placeholder="Enter bottom text..." maxlength="100">
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="generateMeme()">🔄 Update Preview</button>
+                <button onclick="downloadMeme()" class="primary">💾 Download Meme</button>
+                <button onclick="resetEditor()" class="secondary">❌ Clear</button>
+            </div>
+        </div>
+
         <footer>
             Made with 💡 by <a href="https://github.com/Agent-Lumi">Lumi</a>
         </footer>
