@@ -1,68 +1,90 @@
-# meme-generator-pro
+# 💡 Meme Generator Pro
 
-Easy meme generator with popular templates and custom upload support
+A powerful, feature-rich meme generator with popular templates and custom upload support.
 
-## 🚀 Live Demo
-
-**[👉 Try it now](https://html-preview.github.io/?url=https://github.com/Agent-Lumi/meme-generator-pro/blob/main/index.html)**
+**Live Demo:** [Try it now!](https://Agent-Lumi.github.io/meme-generator-pro)
 
 ## ✨ Features
-- **12 Popular Meme Templates**: Drake, Distracted Boyfriend, Change My Mind, and more!
-- **Template Gallery**: Browse thumbnails and click to select
-- **Custom Upload**: Upload your own images
-- **Classic Meme Format**: Top and bottom text with Impact font
-- **One-click Download**: Save your memes as PNG
-- **Clean, modern dark theme UI**
-- **Fully responsive** - works on mobile and desktop
-- **100% client-side** - works offline
 
-## 📋 Available Templates
+### 🎨 Templates
+- 12 popular meme templates ready to use
+- Drake Hotline Bling
+- Distracted Boyfriend
+- Change My Mind
+- Expanding Brain
+- One Does Not Simply
+- Ancient Aliens
+- Success Kid
+- Roll Safe
+- Evil Kermit
+- Is This a Pigeon?
+- Disaster Girl
+- Hide the Pain Harold
 
-1. 🔥 Drake Hotline Bling
-2. 👀 Distracted Boyfriend
-3. ☕ Change My Mind
-4. 🧠 Expanding Brain
-5. 💍 One Does Not Simply
-6. 👽 Ancient Aliens
-7. 👶 Success Kid
-8. 🤔 Roll Safe
-9. 🐸 Evil Kermit
-10. 🦋 Is This a Pigeon?
-11. 🔥 Disaster Girl
-12. 😬 Hide the Pain Harold
+### 📤 Custom Upload
+- Upload your own images (JPG, PNG, GIF, WebP)
+- Drag & drop support
+- Maximum file size: 10MB
 
-## 📦 Usage
+### ✏️ Editor
+- **Dual text support**: Top and bottom text
+- **Font size control**: Adjustable from 5% to 40%
+- **Text colors**: White, Black, or Yellow with automatic contrasting outlines
+- **Real-time preview**: See changes as you type
+- **Optimized rendering**: Uses requestAnimationFrame for smooth performance
 
-### Option 1: Online (Recommended)
-Click the demo link above!
+### 💾 Export Options
+- **Download**: Save as PNG image
+- **Copy to clipboard**: Quick sharing (Ctrl+C)
+- **Keyboard shortcut**: Ctrl+S to download
 
-### Option 2: Local
-```bash
-git clone https://github.com/Agent-Lumi/meme-generator-pro.git
-cd meme-generator-pro
-# Open index.html
-```
+### ⌨️ Keyboard Shortcuts
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+S` | Download meme |
+| `Ctrl+C` | Copy meme to clipboard |
+| `Escape` | Clear and reset editor |
 
-### GitHub Pages
-The site is automatically deployed via GitHub Pages at:
-`https://agent-lumi.github.io/meme-generator-pro/`
+### 🎯 UI Improvements
+- Clean, dark-themed interface
+- Smooth animations and transitions
+- Responsive design for mobile devices
+- Toast notifications for user feedback
+- Drag & drop visual feedback
+
+### 🚀 PWA Support
+- Works offline
+- Installable as web app
+- Service worker for caching
 
 ## 🛠️ Tech Stack
-- HTML5 / CSS3 / Vanilla JS
-- HTML5 Canvas API for image generation
-- No external dependencies
-- 100% client-side processing
+- Pure HTML5 Canvas for image generation
+- Vanilla JavaScript (no frameworks)
+- CSS Grid & Flexbox for layout
+- GitHub Pages for hosting
 
-## 🎨 How to Use
+## 📱 Usage
 
-1. **Choose a Template**: Click any template in the gallery
-2. **Or Upload Your Own**: Click the upload area to use a custom image
-3. **Add Text**: Type your top and bottom text
-4. **Download**: Click "Download Meme" to save your creation!
+1. **Choose a template** from the gallery or **upload your own image**
+2. **Enter text** in the top and/or bottom fields
+3. **Adjust font size** and **select text color**
+4. **Click "Update Preview"** to see your changes
+5. **Download** or **copy** your meme!
+
+## 🔄 Recent Updates
+
+### v2.0 (Latest)
+- ✅ Fixed duplicated code in HTML
+- ✅ Added copy to clipboard functionality
+- ✅ Added font size slider (5% - 40%)
+- ✅ Added yellow text color option
+- ✅ Added keyboard shortcuts (Ctrl+S, Ctrl+C, Escape)
+- ✅ Improved text rendering with stroke outlines
+- ✅ Added toast notifications
+- ✅ Enhanced drag & drop UX
+- ✅ Added file size validation (10MB max)
+- ✅ Optimized canvas rendering with requestAnimationFrame
+- ✅ Improved responsive design
 
 ## 📝 License
-MIT
-
----
-
-Made with 💡 by [Lumi](https://github.com/Agent-Lumi)
+MIT - Made with 💡 by [Lumi](https://github.com/Agent-Lumi)
