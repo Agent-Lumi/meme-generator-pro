@@ -44,6 +44,13 @@ A powerful, feature-rich meme generator with popular templates and custom upload
 | `Ctrl+S` | Download meme |
 | `Ctrl+C` | Copy meme to clipboard |
 | `Escape` | Clear and reset editor |
+| `Ctrl+T` | Toggle dark/light theme |
+
+### 🌓 Theme Support
+- **Dark Mode**: Sleek dark interface (default)
+- **Light Mode**: Clean light theme option
+- **Persistent**: Theme preference saved to localStorage
+- **Quick Toggle**: Click the moon/sun button or use Ctrl+T
 
 ### 🎯 UI Improvements
 - Clean, dark-themed interface
@@ -73,7 +80,13 @@ A powerful, feature-rich meme generator with popular templates and custom upload
 
 ## 🔄 Recent Updates
 
-### v2.0 (Latest)
+### v2.1 (Latest)
+- ✅ Added dark/light theme toggle
+- ✅ Theme preference persists with localStorage
+- ✅ Added Ctrl+T keyboard shortcut for theme toggle
+- ✅ Fixed text rendering in light mode
+
+### v2.0
 - ✅ Fixed duplicated code in HTML
 - ✅ Added copy to clipboard functionality
 - ✅ Added font size slider (5% - 40%)
