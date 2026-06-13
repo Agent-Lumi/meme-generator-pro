@@ -1,25 +1,17 @@
 # 💡 Meme Generator Pro
 
-A powerful, feature-rich meme generator with popular templates and custom upload support.
+A powerful, feature-rich meme generator with popular templates from Imgflip API and custom upload support.
 
 **Live Demo:** [Try it now!](https://Agent-Lumi.github.io/meme-generator-pro)
 
 ## ✨ Features
 
 ### 🎨 Templates
-- 12 popular meme templates ready to use
-- Drake Hotline Bling
-- Distracted Boyfriend
-- Change My Mind
-- Expanding Brain
-- One Does Not Simply
-- Ancient Aliens
-- Success Kid
-- Roll Safe
-- Evil Kermit
-- Is This a Pigeon?
-- Disaster Girl
-- Hide the Pain Harold
+- **50+ templates** fetched live from Imgflip API
+- **Search** through templates by name
+- **Offline mode** falls back to 12 local templates
+- Auto-refresh capability
+- Template dimensions displayed
 
 ### 📤 Custom Upload
 - Upload your own images (JPG, PNG, GIF, WebP)
@@ -52,12 +44,20 @@ A powerful, feature-rich meme generator with popular templates and custom upload
 - **Persistent**: Theme preference saved to localStorage
 - **Quick Toggle**: Click the moon/sun button or use Ctrl+T
 
+### 🌐 API Integration
+- **Imgflip API**: Fetches 50 most popular meme templates
+- **Live search**: Filter templates in real-time
+- **Offline fallback**: Local templates when offline
+- **CORS enabled**: External images work in canvas
+- **Auto-detection**: Shows connection status
+
 ### 🎯 UI Improvements
 - Clean, dark-themed interface
 - Smooth animations and transitions
 - Responsive design for mobile devices
 - Toast notifications for user feedback
 - Drag & drop visual feedback
+- Template source indicator
 
 ### 🚀 PWA Support
 - Works offline
@@ -66,13 +66,16 @@ A powerful, feature-rich meme generator with popular templates and custom upload
 
 ## 🛠️ Tech Stack
 - Pure HTML5 Canvas for image generation
-- Vanilla JavaScript (no frameworks)
+- Vanilla JavaScript with async/await
+- Imgflip API for meme templates
 - CSS Grid & Flexbox for layout
 - GitHub Pages for hosting
 
 ## 📱 Usage
 
-1. **Choose a template** from the gallery or **upload your own image**
+1. **Choose a template** from the gallery (50+ from API or 12 local) or **upload your own image**
+   - Use the search box to find specific templates
+   - Click 🔄 to refresh templates from API
 2. **Enter text** in the top and/or bottom fields
 3. **Adjust font size** and **select text color**
 4. **Click "Update Preview"** to see your changes
@@ -80,7 +83,17 @@ A powerful, feature-rich meme generator with popular templates and custom upload
 
 ## 🔄 Recent Updates
 
-### v2.1 (Latest)
+### v2.2 (Latest) - API Integration
+- 🌐 Added Imgflip API integration for 50+ live templates
+- 🔍 Added template search functionality
+- 🔄 Added refresh button for live updates
+- ⚠️ Added offline/online status detection
+- 📦 Local templates as fallback when offline
+- 🌍 Cross-origin image support for external templates
+- 📏 Display template dimensions
+- 🟢 Visual indicator for API vs local templates
+
+### v2.1
 - ✅ Added dark/light theme toggle
 - ✅ Theme preference persists with localStorage
 - ✅ Added Ctrl+T keyboard shortcut for theme toggle

@@ -1,6 +1,33 @@
-// Meme Generator Pro - Enhanced Version
-// Template data with names and paths
-const templates = [
+// Meme Generator Pro - Enhanced Version with API Integration
+// API Configuration for fetching memes from Imgflip
+const API = {
+    baseUrl: 'https://api.imgflip.com',
+    
+    async getPopularMemes() {
+        try {
+            const response = await fetch(`${this.baseUrl}/get_memes`);
+            const data = await response.json();
+            if (data.success) {
+                return data.data.memes.slice(0, 50); // Get top 50 memes
+            }
+            return [];
+        } catch (error) {
+            console.error('API Error:', error);
+            return [];
+        }
+    },
+    
+    async searchMemes(query, memes) {
+        // Search through fetched memes
+        const searchLower = query.toLowerCase();
+        return memes.filter(meme => 
+            meme.name.toLowerCase().includes(searchLower)
+        );
+    }
+};
+
+// Local templates as fallback
+const localTemplates = [
     { id: 'drake', name: 'Drake Hotline Bling', path: 'templates/drake.jpg' },
     { id: 'distracted', name: 'Distracted Boyfriend', path: 'templates/distracted-boyfriend.jpg' },
     { id: 'change-my-mind', name: 'Change My Mind', path: 'templates/change-my-mind.jpg' },
@@ -20,34 +47,138 @@ let selectedTemplate = null;
 let customImage = null;
 let currentImage = null;
 let animationFrame = null;
+let fetchedMemes = [];
+let isOnline = navigator.onLine;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    loadTemplateGallery();
+    // Load templates based on connection status
+    loadTemplates();
     setupUploadHandler();
     setupTextInputs();
     setupFontControls();
     setupKeyboardShortcuts();
+    setupSearch();
+    
+    // Listen for online/offline events
+    window.addEventListener('online', () => {
+        isOnline = true;
+        showToast('🌐 Back online! Fetching fresh templates...');
+        loadTemplates();
+    });
+    
+    window.addEventListener('offline', () => {
+        isOnline = false;
+        showToast('⚠️ Offline mode - Using local templates');
+    });
 });
 
-// Load template gallery
-function loadTemplateGallery() {
+// Load templates from API or fallback to local
+async function loadTemplates() {
     const gallery = document.getElementById('templateGallery');
+    
+    // Show loading state
+    gallery.innerHTML = '<div class="loading-templates">⏳ Loading templates...</div>';
+    
+    if (isOnline) {
+        fetchedMemes = await API.getPopularMemes();
+    }
+    
+    // Use API results or fallback to local
+    const templatesToShow = fetchedMemes.length > 0 ? fetchedMemes : localTemplates;
+    renderTemplates(templatesToShow);
+    
+    // Add indicator showing template source
+    updateTemplateSourceIndicator(fetchedMemes.length > 0 ? 'api' : 'local');
+}
+
+// Render template gallery
+function renderTemplates(templates) {
+    const gallery = document.getElementById('templateGallery');
+    gallery.innerHTML = '';
+    
+    if (templates.length === 0) {
+        gallery.innerHTML = '<div class="no-templates">No templates found</div>';
+        return;
+    }
     
     templates.forEach(template => {
         const card = document.createElement('div');
         card.className = 'template-card';
-        card.dataset.id = template.id;
+        card.dataset.id = template.id || template.url;
+        card.dataset.name = template.name.toLowerCase();
+        
+        const imageUrl = template.url || template.path;
         
         card.innerHTML = `
-            <img src="${template.path}" alt="${template.name}" loading="lazy">
+            <img src="${imageUrl}" alt="${template.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/150x150?text=Error'">
             <div class="template-name">${template.name}</div>
+            ${template.width && template.height ? `<div class="template-dims">${template.width}×${template.height}</div>` : ''}
         `;
         
         card.addEventListener('click', () => selectTemplate(template, card));
         gallery.appendChild(card);
     });
 }
+
+// Update source indicator
+function updateTemplateSourceIndicator(source) {
+    let indicator = document.getElementById('templateSourceIndicator');
+    if (!indicator) {
+        indicator = document.createElement('div');
+        indicator.id = 'templateSourceIndicator';
+        indicator.className = 'template-source-indicator';
+        document.querySelector('.template-gallery')?.parentElement?.prepend(indicator);
+    }
+    
+    if (source === 'api') {
+        indicator.innerHTML = '🌐 Live templates from Imgflip';
+        indicator.className = 'template-source-indicator api-source';
+    } else {
+        indicator.innerHTML = '📦 Offline mode - Local templates';
+        indicator.className = 'template-source-indicator local-source';
+    }
+}
+
+// Setup search functionality
+function setupSearch() {
+    const section = document.querySelector('.section:has(#templateGallery)');
+    if (!section) return;
+    
+    // Create search input
+    const searchContainer = document.createElement('div');
+    searchContainer.className = 'search-container';
+    searchContainer.innerHTML = `
+        <input type="text" id="templateSearch" placeholder="🔍 Search templates..." class="search-input">
+        <button id="refreshTemplates" class="refresh-btn" title="Refresh templates">🔄</button>
+    `;
+    
+    section.insertBefore(searchContainer, document.getElementById('templateGallery'));
+    
+    // Search functionality
+    const searchInput = document.getElementById('templateSearch');
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        const cards = document.querySelectorAll('.template-card');
+        
+        cards.forEach(card => {
+            const name = card.dataset.name || '';
+            card.style.display = name.includes(query) ? 'block' : 'none';
+        });
+    });
+    
+    // Refresh button
+    document.getElementById('refreshTemplates')?.addEventListener('click', () => {
+        if (isOnline) {
+            showToast('🔄 Refreshing templates...');
+            loadTemplates();
+        } else {
+            showToast('❌ Cannot refresh - you are offline');
+        }
+    });
+}
+
+// Old loadTemplateGallery function - replaced by loadTemplates/renderTemplates
 
 // Select a template
 function selectTemplate(template, cardElement) {
@@ -63,13 +194,23 @@ function selectTemplate(template, cardElement) {
     
     // Load the image and show editor
     const img = new Image();
+    img.crossOrigin = 'anonymous'; // Enable CORS for external images
+    
     img.onload = () => {
         currentImage = img;
         showEditor();
         generateMeme();
     };
-    img.src = template.path;
+    
+    img.onerror = () => {
+        showToast('❌ Failed to load image. Try another template or upload your own.');
+    };
+    
+    // Use the appropriate image source
+    img.src = template.url || template.path;
 }
+
+// Load template gallery - DEPRECATED, replaced by loadTemplates/renderTemplates
 
 // Setup file upload handler
 function setupUploadHandler() {
