@@ -48,6 +48,64 @@ let customImage = null;
 let currentImage = null;
 let animationFrame = null;
 let fetchedMemes = [];
+
+// Undo/Redo history
+const memeHistory = {
+    past: [],
+    future: [],
+    maxSize: 20,
+    saveState() {
+        const state = {
+            topText: document.getElementById('topText').value,
+            bottomText: document.getElementById('bottomText').value,
+            fontSize: document.getElementById('fontSize').value,
+            textColor: document.querySelector('input[name="textColor"]:checked')?.value || 'white',
+            timestamp: Date.now()
+        };
+        // Don't save if same as last state
+        if (this.past.length > 0) {
+            const last = this.past[this.past.length - 1];
+            if (last.topText === state.topText && 
+                last.bottomText === state.bottomText &&
+                last.fontSize === state.fontSize &&
+                last.textColor === state.textColor) {
+                return;
+            }
+        }
+        this.past.push(state);
+        if (this.past.length > this.maxSize) this.past.shift();
+        this.future = []; // Clear redo stack on new action
+        updateUndoRedoButtons();
+    },
+    undo() {
+        if (this.past.length === 0) return null;
+        const current = {
+            topText: document.getElementById('topText').value,
+            bottomText: document.getElementById('bottomText').value,
+            fontSize: document.getElementById('fontSize').value,
+            textColor: document.querySelector('input[name="textColor"]:checked')?.value || 'white'
+        };
+        this.future.unshift(current);
+        const state = this.past.pop();
+        updateUndoRedoButtons();
+        return state;
+    },
+    redo() {
+        if (this.future.length === 0) return null;
+        const current = {
+            topText: document.getElementById('topText').value,
+            bottomText: document.getElementById('bottomText').value,
+            fontSize: document.getElementById('fontSize').value,
+            textColor: document.querySelector('input[name="textColor"]:checked')?.value || 'white'
+        };
+        this.past.push(current);
+        const state = this.future.shift();
+        updateUndoRedoButtons();
+        return state;
+    },
+    canUndo() { return this.past.length > 0; },
+    canRedo() { return this.future.length > 0; }
+};
 let isOnline = navigator.onLine;
 
 // Initialize
@@ -59,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFontControls();
     setupKeyboardShortcuts();
     setupSearch();
+    setupUndoRedo();
     
     // Listen for online/offline events
     window.addEventListener('online', () => {
@@ -558,4 +617,120 @@ function resetEditor() {
     selectedTemplate = null;
     customImage = null;
     currentImage = null;
+    memeHistory.past = [];
+    memeHistory.future = [];
+    updateUndoRedoButtons();
+}
+
+// Setup Undo/Redo functionality
+function setupUndoRedo() {
+    // Add undo/redo buttons to controls
+    const controls = document.querySelector('.controls');
+    if (controls) {
+        // Insert undo/redo buttons after the first button
+        const undoBtn = document.createElement('button');
+        undoBtn.id = 'undoBtn';
+        undoBtn.className = 'secondary';
+        undoBtn.innerHTML = '↩️ Undo';
+        undoBtn.title = 'Ctrl+Z to undo';
+        undoBtn.disabled = true;
+        undoBtn.onclick = performUndo;
+
+        const redoBtn = document.createElement('button');
+        redoBtn.id = 'redoBtn';
+        redoBtn.className = 'secondary';
+        redoBtn.innerHTML = '↪️ Redo';
+        redoBtn.title = 'Ctrl+Y or Ctrl+Shift+Z to redo';
+        redoBtn.disabled = true;
+        redoBtn.onclick = performRedo;
+
+        // Insert before the Clear button
+        const clearBtn = Array.from(controls.children).find(btn => btn.textContent.includes('Clear'));
+        if (clearBtn) {
+            controls.insertBefore(undoBtn, clearBtn);
+            controls.insertBefore(redoBtn, clearBtn);
+        } else {
+            controls.appendChild(undoBtn);
+            controls.appendChild(redoBtn);
+        }
+    }
+
+    // Listen for input changes to save state
+    const topText = document.getElementById('topText');
+    const bottomText = document.getElementById('bottomText');
+    const fontSize = document.getElementById('fontSize');
+    const colorInputs = document.querySelectorAll('input[name="textColor"]');
+
+    // Save initial state
+    setTimeout(() => memeHistory.saveState(), 100);
+
+    // Auto-save on changes (debounced)
+    let saveTimer;
+    const inputs = [topText, bottomText, fontSize, ...colorInputs];
+    inputs.forEach(input => {
+        input.addEventListener('change', () => {
+            clearTimeout(saveTimer);
+            saveTimer = setTimeout(() => memeHistory.saveState(), 300);
+        });
+        input.addEventListener('input', () => {
+            if (input.type === 'range') {
+                clearTimeout(saveTimer);
+                saveTimer = setTimeout(() => memeHistory.saveState(), 500);
+            }
+        });
+    });
+
+    // Keyboard shortcuts for undo/redo
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey || e.metaKey) {
+            if (e.key === 'z' && !e.shiftKey) {
+                e.preventDefault();
+                performUndo();
+            } else if ((e.key === 'y') || (e.key === 'z' && e.shiftKey)) {
+                e.preventDefault();
+                performRedo();
+            }
+        }
+    });
+}
+
+function updateUndoRedoButtons() {
+    const undoBtn = document.getElementById('undoBtn');
+    const redoBtn = document.getElementById('redoBtn');
+    if (undoBtn) {
+        undoBtn.disabled = !memeHistory.canUndo();
+        undoBtn.style.opacity = memeHistory.canUndo() ? '1' : '0.5';
+    }
+    if (redoBtn) {
+        redoBtn.disabled = !memeHistory.canRedo();
+        redoBtn.style.opacity = memeHistory.canRedo() ? '1' : '0.5';
+    }
+}
+
+function performUndo() {
+    const state = memeHistory.undo();
+    if (state) {
+        restoreState(state);
+        showToast('↩️ Undo');
+    }
+}
+
+function performRedo() {
+    const state = memeHistory.redo();
+    if (state) {
+        restoreState(state);
+        showToast('↪️ Redo');
+    }
+}
+
+function restoreState(state) {
+    document.getElementById('topText').value = state.topText;
+    document.getElementById('bottomText').value = state.bottomText;
+    document.getElementById('fontSize').value = state.fontSize;
+    document.getElementById('fontSizeValue').textContent = state.fontSize + '%';
+    
+    const colorInput = document.querySelector(`input[name="textColor"][value="${state.textColor}"]`);
+    if (colorInput) colorInput.checked = true;
+    
+    generateMeme();
 }
