@@ -559,6 +559,126 @@ async function copyToClipboard() {
     }
 }
 
+// Share meme to social media or copy link
+async function shareMeme() {
+    const canvas = document.getElementById('memeCanvas');
+    
+    // Get data URL for the meme
+    const dataUrl = canvas.toDataURL('image/png');
+    
+    // Try Web Share API first (works on mobile and supported browsers)
+    if (navigator.share) {
+        try {
+            // Convert data URL to blob for sharing
+            const response = await fetch(dataUrl);
+            const blob = await response.blob();
+            const file = new File([blob], `meme-${Date.now()}.png`, { type: 'image/png' });
+            
+            await navigator.share({
+                title: 'Check out my meme!',
+                text: 'Created with Meme Generator Pro 💡',
+                files: [file]
+            });
+            showToast('🔗 Meme shared!');
+            return;
+        } catch (err) {
+            // User cancelled or sharing failed, fall through to manual share
+            console.log('Web Share API failed:', err);
+        }
+    }
+    
+    // Fallback: Show share dialog with multiple options
+    showShareDialog(dataUrl);
+}
+
+// Show custom share dialog
+function showShareDialog(dataUrl) {
+    // Remove existing dialog
+    const existing = document.getElementById('shareDialog');
+    if (existing) existing.remove();
+    
+    const dialog = document.createElement('div');
+    dialog.id = 'shareDialog';
+    dialog.className = 'share-dialog';
+    dialog.innerHTML = `
+        <div class="share-dialog-overlay" onclick="closeShareDialog()"></div>
+        <div class="share-dialog-content">
+            <h3>🔗 Share Your Meme</h3>
+            <div class="share-options">
+                <button class="share-btn twitter" onclick="shareToTwitter()">
+                    <span>𝕏</span> Share on X/Twitter
+                </button>
+                <button class="share-btn facebook" onclick="shareToFacebook()">
+                    <span>f</span> Share on Facebook
+                </button>
+                <button class="share-btn reddit" onclick="shareToReddit()">
+                    <span>🤖</span> Share on Reddit
+                </button>
+                <button class="share-btn copy" onclick="copyMemeLink()">
+                    <span>📋</span> Copy Image
+                </button>
+            </div>
+            <div class="share-preview">
+                <img src="${dataUrl}" alt="Meme preview">
+            </div>
+            <button class="close-btn" onclick="closeShareDialog()">Close</button>
+        </div>
+    `;
+    
+    document.body.appendChild(dialog);
+    
+    // Store current meme data URL for sharing functions
+    window.currentMemeDataUrl = dataUrl;
+}
+
+function closeShareDialog() {
+    const dialog = document.getElementById('shareDialog');
+    if (dialog) {
+        dialog.style.animation = 'fadeOut 0.2s ease';
+        setTimeout(() => dialog.remove(), 200);
+    }
+}
+
+function shareToTwitter() {
+    const text = encodeURIComponent('Check out this meme I made! 💡');
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank', 'width=600,height=400');
+    showToast('🐦 Opening X/Twitter...');
+    closeShareDialog();
+}
+
+function shareToFacebook() {
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400');
+    showToast('📘 Opening Facebook...');
+    closeShareDialog();
+}
+
+function shareToReddit() {
+    const url = encodeURIComponent(window.location.href);
+    const title = encodeURIComponent('Check out this meme I made!');
+    window.open(`https://www.reddit.com/submit?url=${url}&title=${title}`, '_blank', 'width=800,height=600');
+    showToast('🤖 Opening Reddit...');
+    closeShareDialog();
+}
+
+async function copyMemeLink() {
+    try {
+        // Convert data URL to blob
+        const response = await fetch(window.currentMemeDataUrl);
+        const blob = await response.blob();
+        await navigator.clipboard.write([
+            new ClipboardItem({ 'image/png': blob })
+        ]);
+        showToast('📋 Meme copied to clipboard!');
+    } catch (err) {
+        // Fallback to copying data URL
+        await navigator.clipboard.writeText(window.currentMemeDataUrl);
+        showToast('📋 Image URL copied!');
+    }
+    closeShareDialog();
+}
+
 // Show toast notification
 function showToast(message) {
     // Remove existing toast
