@@ -28,6 +28,7 @@ A powerful, feature-rich meme generator with popular templates from Imgflip API 
 ### 💾 Export Options
 - **Download**: Save as PNG image
 - **Copy to clipboard**: Quick sharing (Ctrl+C)
+- **Share**: Share directly to Twitter/X, Facebook, Reddit or copy link
 - **Keyboard shortcut**: Ctrl+S to download
 
 ### ⌨️ Keyboard Shortcuts
@@ -37,6 +38,13 @@ A powerful, feature-rich meme generator with popular templates from Imgflip API 
 | `Ctrl+C` | Copy meme to clipboard |
 | `Escape` | Clear and reset editor |
 | `Ctrl+T` | Toggle dark/light theme |
+
+### 🔗 Share Feature
+- **Web Share API**: Native sharing on mobile devices
+- **Social Buttons**: Quick share to Twitter/X, Facebook, Reddit
+- **Copy Image**: Copy meme directly to clipboard
+- **Preview**: See meme before sharing
+- **Fallback**: Custom dialog for browsers without Web Share support
 
 ### 🌓 Theme Support
 - **Dark Mode**: Sleek dark interface (default)
@@ -83,7 +91,15 @@ A powerful, feature-rich meme generator with popular templates from Imgflip API 
 
 ## 🔄 Recent Updates
 
-### v2.2 (Latest) - API Integration
+### v2.3 (Latest) - Share Functionality
+- 🔗 Added share button with social media integration
+- 📱 Web Share API support for mobile devices
+- 💬 Quick share to Twitter/X, Facebook, and Reddit
+- 💼 Copy image directly to clipboard from share dialog
+- 🖼️ Preview meme before sharing
+- 🎨 Share dialog styling for both dark and light modes
+
+### v2.2 - API Integration
 - 🌐 Added Imgflip API integration for 50+ live templates
 - 🔍 Added template search functionality
 - 🔄 Added refresh button for live updates
