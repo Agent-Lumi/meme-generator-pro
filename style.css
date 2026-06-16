@@ -669,3 +669,391 @@ footer a:hover { text-decoration: underline; }
     .color-picker { gap: 0.5rem; }
     .color-option { padding: 0.25rem; }
 }
+
+/* ============ NEW FEATURES: Animations ============ */
+
+/* Smooth page load animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.section {
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+}
+
+.section:nth-child(2) { animation-delay: 0.1s; }
+.section:nth-child(3) { animation-delay: 0.2s; }
+.section:nth-child(4) { animation-delay: 0.3s; }
+
+/* Template card animations */
+@keyframes cardFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.template-card {
+    animation: fadeInUp 0.4s ease forwards;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.template-card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 12px 30px rgba(99, 102, 241, 0.3);
+}
+
+.template-card.selected {
+    animation: pulseBorder 1.5s ease infinite;
+}
+
+@keyframes pulseBorder {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+    50% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+}
+
+/* Text input animations */
+.input-group input:focus {
+    animation: inputGlow 0.3s ease forwards;
+}
+
+@keyframes inputGlow {
+    from { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+    to { box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2); }
+}
+
+/* Button animations */
+button {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(0) scale(0.98);
+}
+
+button.primary:hover {
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+}
+
+/* Meme canvas animation */
+.canvas-container {
+    transition: all 0.3s ease;
+}
+
+.canvas-container.generating {
+    animation: shimmer 1.5s ease infinite;
+}
+
+@keyframes shimmer {
+    0% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.2); }
+    50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.5); }
+    100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.2); }
+}
+
+/* Loading spinner for templates */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-templates::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--primary);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+/* Upload area hover animation */
+.upload-area {
+    transition: all 0.3s ease;
+}
+
+.upload-area.dragover {
+    animation: pulseDrag 0.5s ease infinite;
+    border-color: var(--primary);
+    background: rgba(99, 102, 241, 0.1);
+}
+
+@keyframes pulseDrag {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+/* Toast notification animations */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+/* ============ NEW FEATURE: Interactive Tutorial ============ */
+
+.tutorial-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 2000;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.tutorial-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.tutorial-spotlight {
+    position: absolute;
+    border-radius: 12px;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7), 0 0 30px rgba(99, 102, 241, 0.5);
+    transition: all 0.4s ease;
+}
+
+.tutorial-tooltip {
+    position: absolute;
+    background: var(--bg-card);
+    border: 2px solid var(--primary);
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 350px;
+    z-index: 2001;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.tutorial-tooltip h3 {
+    margin: 0 0 10px 0;
+    color: var(--primary);
+    font-size: 1.2rem;
+}
+
+.tutorial-tooltip p {
+    margin: 0 0 15px 0;
+    color: var(--text);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.tutorial-progress {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 15px;
+}
+
+.tutorial-step-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: all 0.3s ease;
+}
+
+.tutorial-step-dot.active {
+    background: var(--primary);
+    transform: scale(1.3);
+}
+
+.tutorial-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.tutorial-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.tutorial-btn.skip {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+}
+
+.tutorial-btn.next {
+    background: var(--primary);
+    border: none;
+    color: white;
+}
+
+.tutorial-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Tutorial start button */
+.tutorial-start-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    z-index: 100;
+    transition: all 0.3s ease;
+    animation: pulseHelp 2s ease infinite;
+}
+
+@keyframes pulseHelp {
+    0%, 100% { box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
+    50% { box-shadow: 0 4px 25px rgba(99, 102, 241, 0.7); }
+}
+
+.tutorial-start-btn:hover {
+    transform: scale(1.1);
+    animation: none;
+}
+
+/* ============ NEW FEATURE: Text Templates ============ */
+
+.text-templates-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+
+.text-templates-section h4 {
+    margin: 0 0 12px 0;
+    color: var(--text);
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.text-templates-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.text-template-btn {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text);
+}
+
+.text-template-btn:hover {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.text-template-btn.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+/* Tooltip for templates */
+.text-template-btn {
+    position: relative;
+}
+
+.text-template-btn::after {
+    content: attr(data-preview);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.text-template-btn:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-4px);
+}
+
+/* Editor section reveal animation */
+.editor-section {
+    display: none;
+}
+
+.editor-section.visible {
+    display: block;
+    animation: slideDown 0.5s ease forwards;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Text bounce animation when typing */
+@keyframes textBounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+.meme-text-updating {
+    animation: textBounce 0.3s ease;
+}
+
+/* Keyboard shortcut hint animation */
+.keyboard-hints {
+    animation: fadeIn 0.5s ease 1s forwards;
+    opacity: 0;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}

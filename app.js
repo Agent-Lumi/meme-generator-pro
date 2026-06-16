@@ -854,3 +854,348 @@ function restoreState(state) {
     
     generateMeme();
 }
+// ============================================
+// NEW FEATURES ADDED v2.1: Animations, Tutorial, Text Templates
+// ============================================
+
+// ============ TEXT TEMPLATES ============
+const memeTextTemplates = [
+    { id: 'drake', name: 'Drake Format', topText: '', bottomText: '' },
+    { id: 'distracted', name: 'Distracted BF', topText: '', bottomText: '' },
+    { id: 'change-my-mind', name: 'Change My Mind', topText: 'CHANGE MY MIND', bottomText: '' },
+    { id: 'ancient-aliens', name: 'Ancient Aliens', topText: 'I\'M NOT SAYING IT WAS ALIENS', bottomText: 'BUT IT WAS ALIENS' },
+    { id: 'success-kid', name: 'Success Kid', topText: 'I', bottomText: 'DID IT' },
+    { id: 'evil-kermit', name: 'Evil Kermit', topText: 'ME:', bottomText: 'ALSO ME:' },
+    { id: 'roll-safe', name: 'Roll Safe', topText: 'YOU CAN\'T BE BROKE', bottomText: 'IF YOU DON\'T CHECK YOUR BANK ACCOUNT' },
+    { id: 'one-does-not', name: 'One Does Not', topText: 'ONE DOES NOT SIMPLY', bottomText: 'WALK INTO MORDOR' },
+    { id: 'is-this-pigeon', name: 'Is This Pigeon', topText: 'IS THIS A', bottomText: 'PIGEON?' },
+    { id: 'expanding-brain', name: 'Big Brain', topText: 'ME:', bottomText: 'BIG BRAIN TIME' },
+    { id: 'harold', name: 'Hide Pain', topText: '*TRIES TO LOOK HAPPY*', bottomText: '*INTERNAL SCREAMING*' },
+    { id: 'disaster', name: 'Disaster Girl', topText: '', bottomText: '' },
+    { id: 'hello-there', name: 'Hello There', topText: 'HELLO THERE', bottomText: 'GENERAL KENOBI' },
+    { id: 'always-has-been', name: 'Always Has Been', topText: 'WAIT, IT\'S ALL [TOPIC]?', bottomText: 'ALWAYS HAS BEEN' },
+    { id: 'stonks', name: 'Stonks', topText: 'STONKS', bottomText: '' },
+    { id: 'doubt', name: 'Press X', topText: 'PRESS X TO', bottomText: 'DOUBT' },
+    { id: 'surprised-pikachu', name: 'Surprised', topText: '*DOES SOMETHING*', bottomText: '*SURPRISED PIKACHU FACE*' },
+    { id: 'distracted-gf', name: 'Distracted GF', topText: '[NEW THING]', bottomText: '[ME]' },
+    { id: 'woman-yelling', name: 'Woman Yelling', topText: '[YELLING]', bottomText: '[CAT]' },
+    { id: 'two-buttons', name: 'Two Buttons', topText: '[BUTTON 1]', bottomText: '[BUTTON 2]' }
+];
+
+// Create text templates UI
+function createTextTemplatesUI() {
+    const textControls = document.querySelector('.text-controls');
+    if (!textControls || document.querySelector('.text-templates-section')) return;
+    
+    const templatesSection = document.createElement('div');
+    templatesSection.className = 'text-templates-section';
+    templatesSection.innerHTML = `
+        <h4>⚡ Quick Templates</h4>
+        <div class="text-templates-grid" id="textTemplatesGrid">
+            ${memeTextTemplates.slice(0, 12).map(t => `
+                <button class="text-template-btn" data-template="${t.id}" 
+                        data-top="${t.topText}" data-bottom="${t.bottomText}"
+                        data-preview="${t.topText || '...'} / ${t.bottomText || '...'}">
+                    ${t.name}
+                </button>
+            `).join('')}
+        </div>
+    `;
+    
+    textControls.appendChild(templatesSection);
+    
+    // Add event listeners
+    document.querySelectorAll('.text-template-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const topText = btn.dataset.top;
+            const bottomText = btn.dataset.bottom;
+            
+            // Save current state for undo
+            if (typeof memeHistory !== 'undefined' && memeHistory.saveState) {
+                memeHistory.saveState();
+            }
+            
+            // Animate text inputs
+            const topInput = document.getElementById('topText');
+            const bottomInput = document.getElementById('bottomText');
+            
+            topInput.value = topText;
+            bottomInput.value = bottomText;
+            
+            // Add animation class
+            topInput.classList.add('meme-text-updating');
+            bottomInput.classList.add('meme-text-updating');
+            
+            setTimeout(() => {
+                topInput.classList.remove('meme-text-updating');
+                bottomInput.classList.remove('meme-text-updating');
+            }, 300);
+            
+            // Update active state
+            document.querySelectorAll('.text-template-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Generate
+            generateMeme();
+            
+            showToast(`✨ Applied template: ${btn.textContent.trim()}`);
+        });
+    });
+}
+
+// ============ INTERACTIVE TUTORIAL ============
+const tutorialSteps = [
+    {
+        title: '👋 Welcome to Meme Generator Pro!',
+        content: 'Let\'s take a quick tour of how to create amazing memes.',
+        target: 'h1',
+        position: 'bottom'
+    },
+    {
+        title: '📋 Choose a Template',
+        content: 'Click on any popular meme template to get started. We have over 50 templates from Imgflip!',
+        target: '#templateGallery',
+        position: 'bottom'
+    },
+    {
+        title: '📤 Upload Your Own',
+        content: 'Or upload your own image by clicking here. Drag & drop works too!',
+        target: '#uploadArea',
+        position: 'right'
+    },
+    {
+        title: '✏️ Edit Your Meme',
+        content: 'Add text to the top and bottom. Adjust font size and color to match your style.',
+        target: '#editorSection',
+        position: 'top'
+    },
+    {
+        title: '⚡ Quick Templates',
+        content: 'Click these buttons to instantly apply popular meme text combinations!',
+        target: '.text-templates-section',
+        position: 'left'
+    },
+    {
+        title: '🎨 Preview & Download',
+        content: 'Your meme updates automatically! Click Download to save it, or Copy to share.',
+        target: '.controls',
+        position: 'top'
+    },
+    {
+        title: '⌨️ Keyboard Shortcuts',
+        content: 'Pro tip: Use Ctrl+S to download, Ctrl+Z to undo, and Ctrl+T to toggle themes!',
+        target: '.keyboard-hints',
+        position: 'top'
+    }
+];
+
+let currentTutorialStep = 0;
+let tutorialActive = false;
+
+function initTutorial() {
+    // Check if user has seen tutorial
+    const hasSeenTutorial = localStorage.getItem('meme-tutorial-seen');
+    
+    // Create tutorial elements
+    const tutorialOverlay = document.createElement('div');
+    tutorialOverlay.id = 'tutorialOverlay';
+    tutorialOverlay.className = 'tutorial-overlay';
+    tutorialOverlay.innerHTML = `
+        <div class="tutorial-spotlight" id="tutorialSpotlight"></div>
+        <div class="tutorial-tooltip" id="tutorialTooltip">
+            <div class="tutorial-progress" id="tutorialProgress"></div>
+            <h3 id="tutorialTitle"></h3>
+            <p id="tutorialContent"></p>
+            <div class="tutorial-buttons">
+                <button class="tutorial-btn skip" id="tutorialSkip">Skip Tour</button>
+                <button class="tutorial-btn next" id="tutorialNext">Next →</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(tutorialOverlay);
+    
+    // Create help button
+    const helpBtn = document.createElement('button');
+    helpBtn.className = 'tutorial-start-btn';
+    helpBtn.innerHTML = '❓';
+    helpBtn.title = 'Start Tutorial';
+    helpBtn.onclick = () => startTutorial();
+    document.body.appendChild(helpBtn);
+    
+    // Event listeners
+    document.getElementById('tutorialSkip').addEventListener('click', endTutorial);
+    document.getElementById('tutorialNext').addEventListener('click', nextTutorialStep);
+    
+    // Start automatically for first-time users
+    if (!hasSeenTutorial) {
+        setTimeout(() => startTutorial(), 1000);
+    }
+}
+
+function startTutorial() {
+    currentTutorialStep = 0;
+    tutorialActive = true;
+    document.getElementById('tutorialOverlay').classList.add('active');
+    showTutorialStep(0);
+}
+
+function showTutorialStep(index) {
+    if (index >= tutorialSteps.length) {
+        endTutorial();
+        return;
+    }
+    
+    const step = tutorialSteps[index];
+    const target = document.querySelector(step.target);
+    const spotlight = document.getElementById('tutorialSpotlight');
+    const tooltip = document.getElementById('tutorialTooltip');
+    
+    // Update content
+    document.getElementById('tutorialTitle').textContent = step.title;
+    document.getElementById('tutorialContent').textContent = step.content;
+    document.getElementById('tutorialNext').textContent = index === tutorialSteps.length - 1 ? 'Finish 🎉' : 'Next →';
+    
+    // Update progress dots
+    const progressHTML = tutorialSteps.map((_, i) => 
+        `<div class="tutorial-step-dot ${i === index ? 'active' : ''}"></div>`
+    ).join('');
+    document.getElementById('tutorialProgress').innerHTML = progressHTML;
+    
+    if (target) {
+        const rect = target.getBoundingClientRect();
+        
+        // Position spotlight
+        spotlight.style.left = rect.left - 10 + 'px';
+        spotlight.style.top = rect.top - 10 + 'px';
+        spotlight.style.width = rect.width + 20 + 'px';
+        spotlight.style.height = rect.height + 20 + 'px';
+        
+        // Position tooltip
+        let tooltipTop = rect.bottom + 20;
+        let tooltipLeft = rect.left + rect.width / 2 - 175;
+        
+        // Adjust for position
+        if (step.position === 'top') {
+            tooltipTop = rect.top - tooltip.offsetHeight - 20;
+        } else if (step.position === 'right') {
+            tooltipTop = rect.top + rect.height / 2 - tooltip.offsetHeight / 2;
+            tooltipLeft = rect.right + 20;
+        } else if (step.position === 'left') {
+            tooltipTop = rect.top + rect.height / 2 - tooltip.offsetHeight / 2;
+            tooltipLeft = rect.left - tooltip.offsetWidth - 20;
+        }
+        
+        // Keep tooltip in viewport
+        tooltipLeft = Math.max(20, Math.min(tooltipLeft, window.innerWidth - tooltip.offsetWidth - 20));
+        tooltipTop = Math.max(20, Math.min(tooltipTop, window.innerHeight - tooltip.offsetHeight - 20));
+        
+        tooltip.style.left = tooltipLeft + 'px';
+        tooltip.style.top = tooltipTop + 'px';
+        
+        // Scroll to element
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+function nextTutorialStep() {
+    currentTutorialStep++;
+    if (currentTutorialStep >= tutorialSteps.length) {
+        endTutorial();
+    } else {
+        showTutorialStep(currentTutorialStep);
+    }
+}
+
+function endTutorial() {
+    tutorialActive = false;
+    document.getElementById('tutorialOverlay').classList.remove('active');
+    localStorage.setItem('meme-tutorial-seen', 'true');
+    showToast('🎉 Tutorial complete! Have fun making memes!');
+}
+
+// ============ ENHANCED ANIMATIONS ============
+
+// Add CSS animations keyframes to document
+function addAnimationStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        .meme-generator-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            z-index: 3000;
+            animation: slideInRight 0.3s ease forwards;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .meme-generator-toast.success {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+        }
+        
+        .meme-generator-toast.error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+        
+        .meme-generator-toast.info {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Enhanced notification with animation
+function showAnimatedToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `meme-generator-toast ${type}`;
+    toast.innerHTML = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'fadeOut 0.3s ease forwards';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// ============ INITIALIZATION ============
+
+// Initialize new features when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    addAnimationStyles();
+    initTutorial();
+    
+    // Wait for editor to be ready, then add text templates
+    const observer = new MutationObserver((mutations) => {
+        const editor = document.getElementById('editorSection');
+        if (editor && editor.style.display !== 'none') {
+            createTextTemplatesUI();
+        }
+    });
+    
+    const editorSection = document.getElementById('editorSection');
+    if (editorSection) {
+        observer.observe(editorSection, { attributes: true, attributeFilter: ['style'] });
+    }
+});
+
+console.log('%c🎨 Meme Generator Pro v2.1', 'font-size: 20px; font-weight: bold; color: #6366f1;');
+console.log('%cNew features:', 'font-size: 14px;');
+console.log('%c  • Smooth animations throughout', 'color: #22c55e;');
+console.log('%c  • Interactive tutorial for new users', 'color: #22c55e;');
+console.log('%c  • Quick text templates (20 presets!)', 'color: #22c55e;');
